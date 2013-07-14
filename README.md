@@ -6,6 +6,9 @@ A help desk written in node.js using filesystem to keep tickets, comments, image
 - node.js
 - coffee-script (branched for node.js)
 - couchbase (more coming soon)
+- swig for template rendering
+- express for routing
+ - consolidate (express requirement)
 
 *Features*
 - issue/error tracking
@@ -17,20 +20,32 @@ Import filesystem to use as database for now **fs**
 
     fs = require 'fs'
 
-Use ect as template renderer. **ect**
+**swig** is the template renderer. And here we will
+load the templates into the system to speed of use.
 
-    ect = require 'ect'
+    swig = require 'swig'
 
-**ectr** is the name of the ectrenderer used.
+**con** is the variable for consolidate to
+render templates correctly into express.
 
-    ectr = ect({ watch: true, root: __dirname + '/views' })
+    con = require 'consolidate'
 
 Use express to make routing nice & simple
 imported as **ex** and **app** is still
-default name
+default name.
 
     ex = require 'express'
     app = ex()
+
+Assign swig to html files.
+
+    app.engine('html', con.swig);
+
+Set html files to the default extension.
+This will make using text editors easier.
+
+    app.set('view engine', 'html');
+    app.set('views', __dirname + '/views');
 
 Use body parser for post requests
 
@@ -40,25 +55,32 @@ Use body parser for post requests
 ./views/index.html
 
     app.get '/', (req,res) ->
-        res.send 'ko'
+        res.render 'index', {
+            'a':'b'
+        }
 
 ## New Issues Page
-
+./views/new.html
 
     app.get '/new', (req,res) ->
-        res.send 'new error page created here'
+        res.render 'new', {}
 
 ## Full Issue List
+./views/list.html
 
     app.get '/list', (req,res) ->
-        res.send 'list of errors here'
+        res.render 'list', {}
 
 ## Issue (id)
+./views/issue.html
 
     app.get '/issue/:id', (req,res) ->
-        res.send 'issue display issue[id]'
+        res.render 'issue', {}
 
 ## Run
 then run the app on port **8008**
 
-    app.listen(8008);
+    if not module.parent
+        app.listen(8008);
+    else
+        exports ? app
