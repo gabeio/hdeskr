@@ -1,8 +1,7 @@
-hDESKr
-=========
+# hDESKr
 A help desk written in node.js using filesystem to keep tickets, comments, images, etc.
 
-*Requirements*
+## Requirements
 - node.js
 - coffee-script (branched for node.js)
 - couchbase (more coming soon)
@@ -10,7 +9,7 @@ A help desk written in node.js using filesystem to keep tickets, comments, image
 - express for routing
  - consolidate (express requirement)
 
-*Features*
+## Features:
 - issue/error tracking
 - privacy settings
  - anonymous issue creation
@@ -51,7 +50,7 @@ Use body parser for post requests
 
     app.use ex.bodyParser()
 
-## Index page
+### Index page
 ./views/index.html
 
     app.get '/', (req,res) ->
@@ -59,19 +58,19 @@ Use body parser for post requests
             'a':'b'
         }
 
-## New Issues Page
+### New Issues Page
 ./views/new.html
 
     app.get '/new', (req,res) ->
         res.render 'new', {}
 
-## Full Issue List
+### Full Issue List
 ./views/list.html
 
     app.get '/list', (req,res) ->
         res.render 'list', {}
 
-## Issue (id)
+### Issue (id)
 ./views/issue.html
 
     app.get '/issue/:id', (req,res) ->
