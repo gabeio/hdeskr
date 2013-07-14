@@ -52,13 +52,20 @@ This will make using text editors easier.
     app.set('view engine', 'html');
     app.set('views', __dirname + '/views');
 
+Configure swig to 
+
+    swig.init({
+        cache: false
+        root: './views/'
+    })
+
+
 Use body parser for post requests
 
     app.use ex.bodyParser()
 
 ### Index page
 ./views/index.html
-
 
     app.get '/', (req,res) ->
         res.render 'index', {}
