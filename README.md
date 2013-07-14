@@ -15,9 +15,15 @@ A help desk written in node.js using filesystem to keep tickets, comments, image
  - anonymous issue creation
  - anonymous issue commenting
 
+###
 Import filesystem to use as database for now **fs**
 
-    fs = require 'fs'
+fs = require 'fs'
+###
+
+For starting use memory database
+
+    db = {}
 
 **swig** is the template renderer. And here we will
 load the templates into the system to speed of use.
@@ -53,10 +59,9 @@ Use body parser for post requests
 ### Index page
 ./views/index.html
 
+
     app.get '/', (req,res) ->
-        res.render 'index', {
-            'a':'b'
-        }
+        res.render 'index', {}
 
 ### New Issues Page
 ./views/new.html
