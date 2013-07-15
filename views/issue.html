@@ -1,10 +1,88 @@
 {% extends 'base.html' %}
 
-{% block title %}Open New Issue{% endblock %}
+{% block title %}{{ issue['title'] }}{% endblock %}
 
 {% block head %}
+<style>
+.nolist {
+   list-style:none;
+   margin-left:0px !important;
+   margin-bottom:0px !important;
+}
+</style>
 {% endblock %}
 
 {% block content %}
-   An Open Issue
+   <div class="row">
+      <div class="span12">
+         <div class="row">
+            <div class="span10">
+               <h3>{{ issue['title'] }}</h3>
+               <div>{{ issue['details'] }}</div>
+            </div>
+            <div class="span2">
+               <center>
+                  <div>
+                     Are you having<br />
+                     the same problem?
+                  </div>
+                  <script>
+                  function voteUp(){
+                     $("#voteUp").submit();
+                  }
+                  function voteDown(){
+                     $("#voteDown").submit();
+                  }
+                  </script>
+                  <form id="voteUp" method="POST">
+                     <input type="hidden" name="add" value="add">
+                     <label>{{ issue.upvotes | default("0") }}<span> </span><a onClick="voteUp();" class="btn" >Vote <i class='icon-thumbs-up'></i></a></label>
+                  </form>
+                  <form id="voteDown" method="POST">
+                     <input type="hidden" name="rm" value="rm">
+                     <label>{{ issue.downvotes | default("0") }}<span> </span><a onClick="voteDown();" class="btn" >Vote <i class='icon-thumbs-down'></i></a></label>
+                  </form>
+               </center>
+            </div>
+         </div>
+         <div class="row">
+            <div class="span8">
+               <hr />
+               {% if issue.comments %}
+               <ul class="nolist">
+                  {% for comment in issue.comments %}
+                  <li><label>{{ comment.email }}</label>{{ comment.text }}</li><hr />
+                  {% endfor %}
+               </ul>
+               {% endif %}
+            </div>
+         </div>
+         <div class="row">
+            <div class="span8">
+               <form class="form-horizontal" method=POST>
+                  <div class="control-group">
+                     <label class="control-label">Leave a comment:</label>
+                  </div>
+                  <div class="control-group">
+                     <label class="control-label" for="email">Email:</label>
+                     <div class="controls">
+                        <input class="span2" type="text" name="email" id="email">
+                     </div>
+                  </div>
+                  <div class="control-group">
+                     <label class="control-label" for="comment">Comment:</label>
+                     <div class="controls">
+                        <textarea name="text" id="comment"></textarea>
+                     </div>
+                  </div>
+                  <div class="control-group">
+                     <div class="controls">
+                        <input class="btn" type="submit" value="Submit" />
+                     </div>
+                  </div>
+               </form>
+            </div>
+         </div>
+      </div>
+   </div>
 {% endblock %}

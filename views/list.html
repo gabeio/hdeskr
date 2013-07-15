@@ -6,5 +6,14 @@
 {% endblock %}
 
 {% block content %}
-   List of Issues
+	<h3>Issues</h3>
+	{% if issues %}
+	<ul>
+		{% for issue in issues %}
+		<li><a href="/issue/{{ issues.indexOf(issue) }}">{{ issue.title }}</a></li>
+		{% endfor %}
+	</ul>
+	{% else %}
+	<a href="/new">Create a new Issue</a>
+	{% endif %}
 {% endblock %}

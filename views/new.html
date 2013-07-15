@@ -3,9 +3,27 @@
 {% block title %}Open New Issue{% endblock %}
 
 {% block head %}
-   {% parent %}
 {% endblock %}
 
 {% block content %}
-   Open New Issue
+    <h3>Open New Issue</h3>
+    <form class="form-horizontal" method=POST>
+        <div class="control-group">
+            <label class="control-label" for="title">Issue Title:</label>
+            <div class="controls">
+                <input autocomplete=off class="span6" id="title" type="text" name="title">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="details">Details:</label>
+            <div class="controls">
+                <textarea autocomplete=off rows="10" class="span6" id="details" name="details"></textarea>
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                <input class="btn" type="submit" value="Submit">
+            </div>
+        </div>
+    </form>
 {% endblock %}
