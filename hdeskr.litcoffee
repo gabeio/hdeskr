@@ -66,7 +66,7 @@ This will make using text editors easier.
 Configure swig to 
 
     swig.init {
-        cache: false
+        cache: true
         root: './views/'
     }
 
@@ -95,7 +95,7 @@ Use body parser for post requests
         issues[nume]['upvotes']=0
         issues[nume]['downvotes']=0
         nume++
-        res.redirect('/issue/'+(nume-1))
+        res.redirect '/issue/'+(nume-1)
 
 ### Full Issue List
 ./views/list.html
@@ -126,6 +126,6 @@ Use body parser for post requests
 then run the app on port **8008**
 
     if not module.parent
-        app.listen(8008);
+        app.listen 8008
     else
         exports ? app
