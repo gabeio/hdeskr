@@ -1,6 +1,9 @@
 # hDESKr
 A help desk written in node.js using filesystem to keep tickets, comments, images, etc.
 
+# WARNING CURRENTLY NON-PERSISTENT
+if the app crashes or you close it all the issues die with it.
+
 ## Requirements:
 - node.js
 - coffee-script (branched for node.js)
@@ -18,6 +21,8 @@ A help desk written in node.js using filesystem to keep tickets, comments, image
 
 ### Usage:
 `"coffee hdeskr.litcoffee <port>"`
+or
+`"foreman "`
 or
 `"coffee -c hdeskr.litcoffee"` and then run in node with `"node hdeskr.js <port>"`
 
