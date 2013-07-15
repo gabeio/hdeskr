@@ -106,13 +106,14 @@ create new issues and save them into the databases
         res.render 'new', {}
 
     app.post '/new', (req,res) ->
-        issues[nume]={}
-        issues[nume]['title']=req.body.title
-        issues[nume]['details']=req.body.details
-        issues[nume]['comments']=[]
-        issues[nume]['upvotes']=0
-        issues[nume]['downvotes']=0
-        nume++
+        if req.body.title!="" and req.body.details!=""
+            issues[nume]={}
+            issues[nume]['title']=req.body.title
+            issues[nume]['details']=req.body.details
+            issues[nume]['comments']=[]
+            issues[nume]['upvotes']=0
+            issues[nume]['downvotes']=0
+            nume++
         res.redirect '/issue/'+(nume-1)
 
 ### Full Issue List
