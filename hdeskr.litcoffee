@@ -1,7 +1,7 @@
 # hDESKr
 A help desk written in node.js using filesystem to keep tickets, comments, images, etc.
 
-## Requirements
+## Requirements:
 - node.js
 - coffee-script (branched for node.js)
 - couchbase (more coming soon)
@@ -10,12 +10,17 @@ A help desk written in node.js using filesystem to keep tickets, comments, image
 - consolidate for template embeding
 - passport for security
 
-
 ## Features:
 - issue/error tracking
 - privacy settings
  - anonymous issue creation
  - anonymous issue commenting
+
+### Usage:
+`"coffee hdeskr.litcoffee <port>"`
+or
+`"coffee -c hdeskr.litcoffee"` and then run in node with `"node hdeskr.js <port>"`
+
 
 Import filesystem to use as database for now **fs**
 
@@ -126,6 +131,9 @@ Use body parser for post requests
 then run the app on port **8008**
 
     if not module.parent
-        app.listen 8008
+        if process.argv[2]
+            app.listen process.argv[2]
+        else
+            app.listen 8008
     else
         exports ? app
