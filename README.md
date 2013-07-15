@@ -1,7 +1,7 @@
 # hDESKr
 A help desk written in node.js using filesystem to keep tickets, comments, images, etc.
 
-# WARNING CURRENTLY NON-PERSISTENT
+## WARNING CURRENTLY NON-PERSISTENT
 if the app crashes or you close it all the issues die with it.
 
 ## Requirements:
