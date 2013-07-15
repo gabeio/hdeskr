@@ -114,7 +114,8 @@ create new issues and save them into the databases
             issues[nume]['upvotes']=0
             issues[nume]['downvotes']=0
             nume++
-        res.redirect '/issue/'+(nume-1)
+            res.redirect '/issue/'+(nume-1)
+        res.redirect '/issue/'+nume
 
 ### Full Issue List
 ./views/list.html
