@@ -20,11 +20,11 @@ if the app crashes or you close it all the issues die with it.
  - anonymous issue commenting
 
 ### Usage:
-`"coffee hdeskr.litcoffee <port>"`  
+`coffee hdeskr.litcoffee <port>`  
 or  
-`"foreman start"`  
+`foreman start`  
 or  
-`"coffee -c hdeskr.litcoffee"` and then run in node with `"node hdeskr.js <port>"`
+`coffee -c hdeskr.litcoffee` and then run in node with `node hdeskr.js <port>`
 
 
 Import filesystem to use as database for now **fs**
