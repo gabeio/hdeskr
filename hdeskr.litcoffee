@@ -7,7 +7,6 @@ if the app crashes or you close it all the issues die with it.
 ## Requirements:
 - node.js
 - coffee-script (branched for node.js)
-- couchbase (more coming soon)
 - swig for template rendering
 - express for routing
 - consolidate for template embeding
@@ -66,7 +65,7 @@ default name.
 
 Assign swig to html files.
 
-    app.engine 'html', con.swig
+    app.engine '.html', con.swig
 
 Set html files to the default extension.
 This will make using text editors easier.
@@ -78,7 +77,7 @@ Configure swig.
 
     swig.init {
         cache: true
-        root: './views/'
+        root: __dirname+'/views'
     }
 
 
