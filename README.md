@@ -20,10 +20,10 @@ if the app crashes or you close it all the issues die with it.
  - anonymous issue commenting
 
 ### Usage:
-`"coffee hdeskr.litcoffee <port>"`
-or
-`"foreman start"`
-or
+`"coffee hdeskr.litcoffee <port>"`  
+or  
+`"foreman start"`  
+or  
 `"coffee -c hdeskr.litcoffee"` and then run in node with `"node hdeskr.js <port>"`
 
 
