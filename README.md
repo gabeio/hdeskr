@@ -22,7 +22,7 @@ if the app crashes or you close it all the issues die with it.
 ### Usage:
 `"coffee hdeskr.litcoffee <port>"`
 or
-`"foreman "`
+`"foreman start"`
 or
 `"coffee -c hdeskr.litcoffee"` and then run in node with `"node hdeskr.js <port>"`
 
@@ -33,13 +33,13 @@ Import filesystem to use as database for now **fs**
 
 Memory database **db**
 
-**nume** == the next issue number to be given out
+**nume** the next issue number to be given out
 
-**issues** == the issues in a list
+**issues** the issues in a list
 
-**db** == a database using hashtable to be used later
+**db** a database using hashtable to be used later
 
-**tags** == a database to keep track of tagged
+**tags** a database to keep track of tagged
 
     nume = 0
     issues = []
@@ -73,7 +73,7 @@ This will make using text editors easier.
     app.set 'view engine', 'html'
     app.set 'views', __dirname+'/views'
 
-Configure swig to 
+Configure swig.
 
     swig.init {
         cache: true
@@ -81,18 +81,25 @@ Configure swig to
     }
 
 
-Use body parser for post requests
+Use body parser for post requests.
 
     app.use ex.bodyParser()
 
+### Base Html
+./views/base.html
+editing base html modifies the base code of all of the pages following.
+this means if there is an error in the swig file this app may not function at all or correctly.
+
 ### Index page
 ./views/index.html
+edit this page to fit your needs
 
     app.get '/', (req,res) ->
         res.render 'index', {}
 
 ### New Issues Page
 ./views/new.html
+create new issues and save them into the databases
 
     app.get '/new', (req,res) ->
         res.render 'new', {}
@@ -109,12 +116,14 @@ Use body parser for post requests
 
 ### Full Issue List
 ./views/list.html
+shows all issues in giant unordered list. (might changed to ordered list...)
 
     app.get '/list', (req,res) ->
         res.render 'list', {'issues':issues}
 
 ### Issue (id)
 ./views/issue.html
+show issues and update issues as more reports come in pretaining to this issue.
 
     app.get '/issue/:id', (req,res) ->
         #console.log issues[req.params.id]
