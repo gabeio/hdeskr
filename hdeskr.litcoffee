@@ -55,6 +55,13 @@ Make sure file is there.
                     return done(null, { email: email })
         )
     )
+    
+    ensureAuthenticated(req, res, next) ->
+        if process.argv[4]=="yes"         # only if private is set to yes
+            if req.isAuthenticated()      # make sure request is authed
+                return next()             # if authed continue
+            res.redirect('/login')        # else send to signin
+        return next()                     # if not required continue
 
 In Memory database **db**
 
@@ -207,6 +214,10 @@ show issues and update issues as more reports come in pretaining to this issue.
 ## Run
 then run the app on port **8008**
 
+    if !process.argv[2]
+        console.log "domain required for open auth"
+        process.exit()
+
     if not module.parent
         if process.argv[3]
             app.listen process.argv[3]
@@ -214,14 +225,3 @@ then run the app on port **8008**
             app.listen 8008
     else
         exports ? app
-    
-    if !process.argv[2]
-        console.log "domain required for open auth"
-        process.exit()
-    
-    ensureAuthenticated(req, res, next) ->
-        if process.argv[4]=="yes"         # only if private is set to yes
-            if req.isAuthenticated()      # make sure request is authed
-                return next()             # if authed continue
-            res.redirect('/login')        # else send to signin
-        return next()                     # if not required continue
