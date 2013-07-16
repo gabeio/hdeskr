@@ -31,7 +31,26 @@ Import filesystem to use as database for now **fs**
 
     fs = require 'fs'
 
-Memory database **db**
+Make sure file is there.
+
+    fs.open('./issues.json', 'w+')
+
+    passport = require 'passport'
+    GoogleStrategy = require('passport-google').Strategy
+    
+    passport.use(
+        new GoogleStrategy(
+            {
+                returnURL: 'http://hdeskr.shov.me/auth/google/return'
+                realm: 'http://hdeskr.shov.me/'
+            },
+            (identifier,profile,done) ->
+                    User.findOrCreate {openId: identifier}, (err, user) ->
+                        done(err, user)
+        )
+    )
+
+In Memory database **db**
 
 **nume** the next issue number to be given out
 
@@ -42,6 +61,11 @@ Memory database **db**
 **tags** a database to keep track of tagged
 
     nume = 0
+    ###
+    try
+         JSON.parse fs.read('./issues.json')
+    catch
+    ###
     issues = []
     db = {}
     tags = {}
@@ -63,6 +87,16 @@ default name.
     ex = require 'express'
     app = ex()
 
+Initialize passport
+
+    ###
+    app.use express.cookieParser()
+    app.use express.session({ secret: 'secret' })
+    app.use express.methodOverride()
+    app.use passport.initialize()
+    app.use passport.session()
+    ###
+
 Assign swig to html files.
 
     app.engine '.html', con.swig
@@ -71,13 +105,13 @@ Set html files to the default extension.
 This will make using text editors easier.
 
     app.set 'view engine', 'html'
-    app.set 'views', __dirname+'/views'
+    app.set 'views', './views'
 
 Configure swig.
 
     swig.init {
-        cache: true
-        root: __dirname+'/views'
+        cache: false
+        root: './views'
     }
 
 
@@ -96,6 +130,25 @@ edit this page to fit your needs
 
     app.get '/', (req,res) ->
         res.render 'index', {}
+
+### Login Pages
+
+    app.get '/auth/google/return',
+        passport.authenticate 'google',
+            {
+                successRedirect: '/'
+                failureRedirect: '/login'
+            }
+
+    app.get '/login/google', passport.authenticate('google'), (req,res) ->
+        res.redirect('/list')
+
+    app.get '/login', (req,res) ->
+        try
+            failed = req.query.fail
+        catch
+            failed = false
+        res.render 'login', {failed:failed}
 
 ### New Issues Page
 ./views/new.html
@@ -121,15 +174,20 @@ create new issues and save them into the databases
 shows all issues in giant unordered list. (might changed to ordered list...)
 
     app.get '/list', (req,res) ->
-        res.render 'list', {'issues':issues}
+        try
+            res.render 'list', { 'issues':issues 'auth':req.user }
+        catch
+            res.render 'list', { 'issues':issues }
 
 ### Issue (id)
 ./views/issue.html
 show issues and update issues as more reports come in pretaining to this issue.
 
     app.get '/issue/:id', (req,res) ->
-        #console.log issues[req.params.id]
-        res.render 'issue', {'issue':issues[req.params.id]}
+        if req.user
+            res.render 'issue', {'issue':issues[req.params.id]}
+        else
+            res.redirect('/login')
     
     app.post '/issue/:id', (req,res) ->
         if req.body.add
@@ -141,6 +199,7 @@ show issues and update issues as more reports come in pretaining to this issue.
                 'email':req.body.email
                 'text':req.body.text
             })
+        fs.write( __dirname+'/issues.json' )
         res.redirect('/issue/'+req.params.id)
 
 ## Run
@@ -153,3 +212,9 @@ then run the app on port **8008**
             app.listen 8008
     else
         exports ? app
+    
+    if process.argv[3]=="lock"
+        ensureAuthenticated = (req, res, next) ->
+          if req.isAuthenticated()
+              return next()
+          res.redirect('/login')
