@@ -19,7 +19,7 @@ if the app crashes or you close it all the issues die with it.
  - anonymous issue commenting
 
 ### Usage:
-`coffee hdeskr.litcoffee <port>`  
+`coffee hdeskr.litcoffee <domain> <port:optional>`
 or  
 `foreman start`  
 or  
@@ -36,17 +36,21 @@ Make sure file is there.
     fs.open('./issues.json', 'w+')
 
     passport = require 'passport'
-    GoogleStrategy = require('passport-google').Strategy
+    BrowserIDStrategy = require('passport-browserid').Strategy
+    
+    passport.serializeUser (user, done) ->
+      done(null, user.email)
+
+    passport.deserializeUser (email, done) ->
+      done(null, { email: email })
     
     passport.use(
-        new GoogleStrategy(
+        new BrowserIDStrategy(
             {
-                returnURL: 'http://hdeskr.shov.me/auth/google/return'
-                realm: 'http://hdeskr.shov.me/'
-            },
-            (identifier,profile,done) ->
-                    User.findOrCreate {openId: identifier}, (err, user) ->
-                        done(err, user)
+                audience: 'http://'+domain+'/'
+            }, (email, done)->
+                process.nextTick ()->
+                    return done(null, { email: email })
         )
     )
 
@@ -133,14 +137,14 @@ edit this page to fit your needs
 
 ### Login Pages
 
-    app.get '/auth/google/return',
-        passport.authenticate 'google',
+    app.get '/auth/persona/return',
+        passport.authenticate 'persona',
             {
-                successRedirect: '/'
+                successRedirect: '/list'
                 failureRedirect: '/login'
             }
 
-    app.get '/login/google', passport.authenticate('google'), (req,res) ->
+    app.get '/login/persona', passport.authenticate('persona'), (req,res) ->
         res.redirect('/list')
 
     app.get '/login', (req,res) ->
@@ -154,10 +158,10 @@ edit this page to fit your needs
 ./views/new.html
 create new issues and save them into the databases
 
-    app.get '/new', (req,res) ->
+    app.get '/new', ensureAuthenticated, (req,res) ->
         res.render 'new', {}
 
-    app.post '/new', (req,res) ->
+    app.post '/new', ensureAuthenticated, (req,res) ->
         if req.body.title!="" and req.body.details!=""
             issues[nume]={}
             issues[nume]['title']=req.body.title
@@ -173,7 +177,7 @@ create new issues and save them into the databases
 ./views/list.html
 shows all issues in giant unordered list. (might changed to ordered list...)
 
-    app.get '/list', (req,res) ->
+    app.get '/list', ensureAuthenticated, (req,res) ->
         try
             res.render 'list', { 'issues':issues 'auth':req.user }
         catch
@@ -183,38 +187,39 @@ shows all issues in giant unordered list. (might changed to ordered list...)
 ./views/issue.html
 show issues and update issues as more reports come in pretaining to this issue.
 
-    app.get '/issue/:id', (req,res) ->
-        if req.user
-            res.render 'issue', {'issue':issues[req.params.id]}
-        else
-            res.redirect('/login')
+    app.get '/issue/:id', ensureAuthenticated, (req,res) ->
+        res.render 'issue', {issue:issues[req.params.id], user:req.user}
     
-    app.post '/issue/:id', (req,res) ->
+    app.post '/issue/:id', ensureAuthenticated, (req,res) ->
         if req.body.add
             issues[req.params.id]['upvotes']++
         if req.body.rm
             issues[req.params.id]['downvotes']++
-        if req.body.email
-            issues[req.params.id]['comments'].push({
-                'email':req.body.email
-                'text':req.body.text
-            })
-        fs.write( __dirname+'/issues.json' )
+        issues[req.params.id]['comments'].push({
+            email:req.user.email
+            text:req.body.text
+        })
+        #fs.write( __dirname+'/issues.json' )
         res.redirect('/issue/'+req.params.id)
 
 ## Run
 then run the app on port **8008**
 
     if not module.parent
-        if process.argv[2]
-            app.listen process.argv[2]
+        if process.argv[3]
+            app.listen process.argv[3]
         else
             app.listen 8008
     else
         exports ? app
     
-    if process.argv[3]=="lock"
-        ensureAuthenticated = (req, res, next) ->
-          if req.isAuthenticated()
-              return next()
-          res.redirect('/login')
+    if !process.argv[2]
+        console.log "domain required for open auth"
+        process.exit()
+    
+    ensureAuthenticated(req, res, next) ->
+        if process.argv[4]=="yes"         # only if private is set to yes
+            if req.isAuthenticated()      # make sure request is authed
+                return next()             # if authed continue
+            res.redirect('/login')        # else send to signin
+        return next()                     # if not required continue
