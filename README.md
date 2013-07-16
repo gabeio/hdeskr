@@ -33,7 +33,7 @@ Import filesystem to use as database for now **fs**
 
 Make sure file is there.
 
-    fs.open('./issues.json', 'w+')
+    #fs.open('./issues.json', 'w+')
 
     passport = require 'passport'
     BrowserIDStrategy = require('passport-browserid').Strategy
@@ -55,13 +55,6 @@ Make sure file is there.
                     return done(null, { email: email })
         )
     )
-    
-    ensureAuthenticated(req, res, next) ->
-        if process.argv[4]=="yes"         # only if private is set to yes
-            if req.isAuthenticated()      # make sure request is authed
-                return next()             # if authed continue
-            res.redirect('/login')        # else send to signin
-        return next()                     # if not required continue
 
 In Memory database **db**
 
@@ -147,13 +140,13 @@ edit this page to fit your needs
 ### Login Pages
 
     app.get '/auth/persona/return',
-        passport.authenticate 'persona',
+        passport.authenticate 'browserid',
             {
                 successRedirect: '/list'
                 failureRedirect: '/login'
             }
 
-    app.get '/login/persona', passport.authenticate('persona'), (req,res) ->
+    app.get '/login/persona', passport.authenticate('browserid'), (req,res) ->
         res.redirect('/list')
 
     app.get '/login', (req,res) ->
@@ -167,10 +160,10 @@ edit this page to fit your needs
 ./views/new.html
 create new issues and save them into the databases
 
-    app.get '/new', ensureAuthenticated, (req,res) ->
-        res.render 'new', {}
+    app.get '/new', (req,res) ->
+        res.render 'new', {user:req.user}
 
-    app.post '/new', ensureAuthenticated, (req,res) ->
+    app.post '/new', (req,res) ->
         if req.body.title!="" and req.body.details!=""
             issues[nume]={}
             issues[nume]['title']=req.body.title
@@ -186,20 +179,20 @@ create new issues and save them into the databases
 ./views/list.html
 shows all issues in giant unordered list. (might changed to ordered list...)
 
-    app.get '/list', ensureAuthenticated, (req,res) ->
+    app.get '/list', (req,res) ->
         try
-            res.render 'list', { 'issues':issues 'auth':req.user }
+            res.render 'list', { issues:issues user:req.user }
         catch
-            res.render 'list', { 'issues':issues }
+            res.render 'list', { issues:issues }
 
 ### Issue (id)
 ./views/issue.html
 show issues and update issues as more reports come in pretaining to this issue.
 
-    app.get '/issue/:id', ensureAuthenticated, (req,res) ->
+    app.get '/issue/:id', (req,res) ->
         res.render 'issue', {issue:issues[req.params.id], user:req.user}
     
-    app.post '/issue/:id', ensureAuthenticated, (req,res) ->
+    app.post '/issue/:id', (req,res) ->
         if req.body.add
             issues[req.params.id]['upvotes']++
         if req.body.rm
