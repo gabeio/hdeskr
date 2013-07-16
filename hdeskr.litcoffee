@@ -44,6 +44,8 @@ Make sure file is there.
     passport.deserializeUser (email, done) ->
       done(null, { email: email })
     
+    domain = process.argv[2]
+    
     passport.use(
         new BrowserIDStrategy(
             {
